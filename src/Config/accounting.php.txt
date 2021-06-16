@@ -1,0 +1,14 @@
+<?php
+
+return [
+    'provider'=>env('ACCOUNTING_PROVIDER', 'quickbooks'),
+    'quickbooks'=>[
+        'client_id' => env('ACCOUNTING_CLIENT_ID', 'XXXXXXXXXXXXX'),
+        'client_secret' => env('ACCOUNTING_CLIENT_SECRET', 'XXXXXXXXXXXXX'),
+        'username' => env('ACCOUNTING_USERNAME', 'XXXXXXXXXXXXX'),
+        'password' => env('ACCOUNTING_PASSWORD', 'XXXXXXXXXXXXX'),
+        'redirect_url' => env('ACCOUNTING_REDIRECT_URI', 'https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl'),
+        'scope' => env('ACCOUNTING_OAUTH_SCOPE', 'com.intuit.quickbooks.accounting, openID, profile, phone, address'),
+        'base_url' =>  env('ACCOUNTING_BASE_URL', 'development'),
+    ],
+];
