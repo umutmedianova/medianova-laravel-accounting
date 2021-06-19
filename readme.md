@@ -24,13 +24,14 @@ return [
         'password' => env('ACCOUNTING_PASSWORD', 'XXXXXXXXXXXXX'),
     ],
     'quickbooks'=>[
-        'client_id' => env('ACCOUNTING_CLIENT_ID', 'CLIENT_ID'),
-        'client_secret' => env('ACCOUNTING_CLIENT_SECRET', 'CLIENT_SECRET'),
-        'username' => env('ACCOUNTING_USERNAME', 'USERNAME'),
-        'password' => env('ACCOUNTING_PASSWORD', 'PASSWORD'),
+        'access_token' => env('ACCOUNTING_ACCESS_TOKEN', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
+        'refresh_token' => env('ACCOUNTING_REFRESH_TOKEN', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
+        'real_me_id' => env('ACCOUNTING_REAL_ME_ID', 'XXXXXXXXXXXXXXXXXXXX'),
+        'client_id' => env('ACCOUNTING_CLIENT_ID', 'XXXXXXXXXXXXX'),
+        'client_secret' => env('ACCOUNTING_CLIENT_SECRET', 'XXXXXXXXXXXXX'),
         'redirect_url' => env('ACCOUNTING_REDIRECT_URI', 'https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl'),
-        'scope' => env('ACCOUNTING_OAUTH_SCOPE', 'com.intuit.quickbooks.accounting'),
-        'base_url' =>  env('ACCOUNTING_BASE_URL', 'https://appcenter.intuit.com/connect'),
+        'scope' => env('ACCOUNTING_OAUTH_SCOPE', 'com.intuit.quickbooks.accounting, openID, profile, phone, address'),
+        'base_url' =>  env('ACCOUNTING_BASE_URL', 'development'),
     ],
 ];
 ```
