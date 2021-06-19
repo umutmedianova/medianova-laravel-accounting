@@ -50,6 +50,7 @@ Accounting::create([], 'invoice');
 
 ## Or use by choosing a provider
 
+# Customer
 ```php
 Accounting::provider('quickbooks')->create([
   "BillAddr" => [
@@ -75,4 +76,34 @@ Accounting::provider('quickbooks')->create([
      "Address" => "evilkingw@myemail.com"
  ]
 ], 'customer');
+```
+
+# Invoice
+```php
+Accounting::provider('quickbooks')->create([
+     "Line" => [
+   [
+     "Amount" => 100.00,
+     "DetailType" => "SalesItemLineDetail",
+     "SalesItemLineDetail" => [
+       "ItemRef" => [
+         "value" => 20,
+         "name" => "Hours"
+        ]
+      ]
+      ]
+    ],
+"CustomerRef"=> [
+  "value"=> 59
+],
+      "BillEmail" => [
+            "Address" => "Familiystore@intuit.com"
+      ],
+      "BillEmailCc" => [
+            "Address" => "a@intuit.com"
+      ],
+      "BillEmailBcc" => [
+            "Address" => "v@intuit.com"
+      ]
+], 'invoice');
 ```
