@@ -1,6 +1,7 @@
 <?php
 
 namespace Medianova\LaravelAccounting\Test;
+
 use Medianova\LaravelAccounting\Facades\Accounting;
 
 class QuickbooksTest extends TestCase
@@ -13,28 +14,70 @@ class QuickbooksTest extends TestCase
     {
         $response = Accounting::create([
             "BillAddr" => [
-                "Line1"=>  "123 Main Street",
-                "City"=>  "Mountain View",
-                "Country"=>  "USA",
-                "CountrySubDivisionCode"=>  "CA",
-                "PostalCode"=>  "94042"
+                "Line1" => "123 Main Street",
+                "City" => "Mountain View",
+                "Country" => "USA",
+                "CountrySubDivisionCode" => "CA",
+                "PostalCode" => "94042"
             ],
-            "Notes" =>  "Here are other details.",
-            "Title"=>  "Mr",
-            "GivenName"=>  "Evil",
-            "MiddleName"=>  "1B",
-            "FamilyName"=>  "King",
-            "Suffix"=>  "Jr",
-            "FullyQualifiedName"=>  "Evil King",
-            "CompanyName"=>  "King Evial",
-            "DisplayName"=>  "Umut Cetinkaya",
-            "PrimaryPhone"=>  [
-                "FreeFormNumber"=>  "(555) 555-5555"
+            "Notes" => "Here are other details.",
+            "Title" => "Mr",
+            "GivenName" => "Evil",
+            "MiddleName" => "1B",
+            "FamilyName" => "King",
+            "Suffix" => "Jr",
+            "FullyQualifiedName" => "Evil King",
+            "CompanyName" => "King Evial",
+            "DisplayName" => "Umut Cetinkaya",
+            "PrimaryPhone" => [
+                "FreeFormNumber" => "(555) 555-5555"
             ],
-            "PrimaryEmailAddr"=>  [
+            "PrimaryEmailAddr" => [
                 "Address" => "evilkingw@myemail.com"
             ]
         ], 'customer');
-        $this->assertTrue($response);
+
+        $res = (array) json_decode($response);
+        $this->assertEquals(400, $res['code']);
+
     }
+
+    /**
+     * Create Invoice
+     * @return void
+     */
+    public
+    function testInvoiceCreate()
+    {
+        $response = Accounting::create([
+            "Line" => [
+                [
+                    "Amount" => 100.00,
+                    "DetailType" => "SalesItemLineDetail",
+                    "SalesItemLineDetail" => [
+                        "ItemRef" => [
+                            "value" => 20,
+                            "name" => "Hours"
+                        ]
+                    ]
+                ]
+            ],
+            "CustomerRef" => [
+                "value" => 59
+            ],
+            "BillEmail" => [
+                "Address" => "Familiystore@intuit.com"
+            ],
+            "BillEmailCc" => [
+                "Address" => "a@intuit.com"
+            ],
+            "BillEmailBcc" => [
+                "Address" => "v@intuit.com"
+            ]
+        ], 'invoice');
+        $res = (array) json_decode($response);
+        $this->assertEquals(400, $res['code']);
+
+    }
+
 }

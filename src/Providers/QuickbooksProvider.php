@@ -7,6 +7,7 @@ use PhpParser\Node\Expr\Throw_;
 
 use QuickBooksOnline\API\Core\ServiceContext;
 use QuickBooksOnline\API\DataService\DataService;
+use QuickBooksOnline\API\Facades\Invoice;
 use QuickBooksOnline\API\PlatformService\PlatformService;
 use QuickBooksOnline\API\Core\Http\Serialization\XmlObjectSerializer;
 use QuickBooksOnline\API\Facades\Customer;
@@ -95,9 +96,9 @@ class QuickbooksProvider implements AccountingInterface
     /**
      * @param $data
      * @param string $type
-     * @return false
+     * @return Mixed
      */
-    public function create($data, $type = 'customer'): bool
+    public function create($data, $type = 'customer')
     {
         switch ($type) {
             case 'customer':
@@ -105,7 +106,7 @@ class QuickbooksProvider implements AccountingInterface
             case 'invoice':
                 return $this->createInvoice($data);
             default:
-                return false;
+                return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);;
         }
     }
 
@@ -115,7 +116,7 @@ class QuickbooksProvider implements AccountingInterface
      * @param array $data
      * @return Mixed
      */
-    public function createCustomer(array $data = []): bool
+    public function createCustomer(array $data = [])
     {
 
         if (!empty($data)) {
@@ -128,7 +129,6 @@ class QuickbooksProvider implements AccountingInterface
                     'message' => $error->getOAuthHelperError(),
                     'body' => $error->getResponseBody(),
                 ]);
-                fwrite(STDERR, print_r($response, TRUE));
             } else {
                 $response = json_encode([
                     'code' => 200,
@@ -139,7 +139,7 @@ class QuickbooksProvider implements AccountingInterface
             return $response;
         }
 
-        return json_encode(['code' => 401,'message' => 'Error', 'body' => null]);
+        return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
 
     }
 
@@ -148,16 +148,33 @@ class QuickbooksProvider implements AccountingInterface
      * Create Invoice
      *
      * @param array $data
-     * @return bool
+     * @return Mixed
      */
-    public function createInvoice(array $data = []): bool
+    public function createInvoice(array $data = [])
     {
 
         if (!empty($data)) {
-            fwrite(STDERR, print_r($data, TRUE));
+            $customerObj = Invoice::create($data);
+            $this->dataService->Add($customerObj);
+            $error = $this->dataService->getLastError();
+            if ($error) {
+                $response = json_encode([
+                    'code' => $error->getHttpStatusCode(),
+                    'message' => $error->getOAuthHelperError(),
+                    'body' => $error->getResponseBody(),
+                ]);
+            } else {
+                $response = json_encode([
+                    'code' => 200,
+                    'message' => 'OK',
+                    'body' => null,
+                ]);
+            }
+            return $response;
         }
 
-        return true;
+        return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
+
 
     }
 
