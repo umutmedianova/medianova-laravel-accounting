@@ -50,7 +50,7 @@ Accounting::create([], 'invoice');
 
 ## Or use by choosing a provider
 
-# Customer
+### Customer
 ```php
 Accounting::provider('quickbooks')->create([
   "BillAddr" => [
@@ -78,7 +78,7 @@ Accounting::provider('quickbooks')->create([
 ], 'customer');
 ```
 
-# Invoice
+### Invoice
 ```php
 Accounting::provider('quickbooks')->create([
      "Line" => [
