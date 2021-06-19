@@ -2,11 +2,17 @@
 
 return [
     'provider'=>env('ACCOUNTING_PROVIDER', 'quickbooks'),
-    'quickbooks'=>[
-        'client_id' => env('ACCOUNTING_CLIENT_ID', 'XXXXXXXXXXXXX'),
-        'client_secret' => env('ACCOUNTING_CLIENT_SECRET', 'XXXXXXXXXXXXX'),
+    'logo'=>[
+        'base_url' =>  env('ACCOUNTING_BASE_URL', 'http://localhost'),
         'username' => env('ACCOUNTING_USERNAME', 'XXXXXXXXXXXXX'),
         'password' => env('ACCOUNTING_PASSWORD', 'XXXXXXXXXXXXX'),
+    ],
+    'quickbooks'=>[
+        'access_token' => env('ACCOUNTING_ACCESS_TOKEN', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
+        'refresh_token' => env('ACCOUNTING_REFRESH_TOKEN', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),
+        'real_me_id' => env('ACCOUNTING_REAL_ME_ID', 'XXXXXXXXXXXXXXXXXXXX'),
+        'client_id' => env('ACCOUNTING_CLIENT_ID', 'XXXXXXXXXXXXX'),
+        'client_secret' => env('ACCOUNTING_CLIENT_SECRET', 'XXXXXXXXXXXXX'),
         'redirect_url' => env('ACCOUNTING_REDIRECT_URI', 'https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl'),
         'scope' => env('ACCOUNTING_OAUTH_SCOPE', 'com.intuit.quickbooks.accounting, openID, profile, phone, address'),
         'base_url' =>  env('ACCOUNTING_BASE_URL', 'development'),

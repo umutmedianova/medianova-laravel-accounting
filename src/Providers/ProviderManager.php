@@ -31,27 +31,28 @@ class ProviderManager
      * Load Accounting Provider
      *
      * @param String $provider
-     * @return void
+     * @return Mixed
      */
     public function provider($provider)
     {
         if ($provider == null) {
             return false;
-        }
+        } else {
 
-        $class_name = ucfirst($provider).'Provider';
+            $class_name = ucfirst($provider) . 'Provider';
 
-        $file = dirname(__FILE__).'/'.$class_name.".php";
-        if (!file_exists($file)) {
-            throw new LaravelAccountingException("We could not found Provider  : {$file}");
-        }
-        $provider = resolve("Medianova\\LaravelAccounting\\Providers\\".$class_name);
-        $this->provider = $provider;
+            $file = dirname(__FILE__) . '/' . $class_name . ".php";
+            if (!file_exists($file)) {
+                throw new LaravelAccountingException("We could not found Provider  : {$file}");
+            }
+            $provider = resolve("Medianova\\LaravelAccounting\\Providers\\" . $class_name);
+            $this->provider = $provider;
 
-        if (!$this->provider instanceof AccountingInterface) {
-            throw new LaravelAccountingProviderException("Provider must implement on LaravelAccountingInterface");
+            if (!$this->provider instanceof AccountingInterface) {
+                throw new LaravelAccountingProviderException("Provider must implement on LaravelAccountingInterface");
+            }
+            return $this;
         }
-        return $this;
     }
 
     /**
@@ -67,12 +68,13 @@ class ProviderManager
 
         if ($type == null) {
             return false;
-        }
+        }else {
 
-        try {
-            return $this->provider->create($data, $type);
-        } catch (LaravelAccountingProviderException $e) {
-            throw new LaravelAccountingException("Create Error!");
+            try {
+                return $this->provider->create($data, $type);
+            } catch (LaravelAccountingProviderException $e) {
+                throw new LaravelAccountingException("Create Error!");
+            }
         }
     }
 
