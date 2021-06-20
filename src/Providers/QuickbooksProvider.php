@@ -217,8 +217,6 @@ class QuickbooksProvider implements AccountingInterface
             switch ($this->type) {
                 case 'customer':
                     return $this->updateCustomer();
-                case 'invoice':
-                    return $this->updateInvoice();
                 default:
                     return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);;
             }
@@ -235,61 +233,39 @@ class QuickbooksProvider implements AccountingInterface
     {
 
         if (!empty($this->customerData)) {
-            $customerObj = Customer::create($this->customerData);
-            $this->dataService->Update($customerObj);
-            $error = $this->dataService->getLastError();
-            if ($error) {
-                $response = json_encode([
-                    'code' => $error->getHttpStatusCode(),
-                    'message' => $error->getOAuthHelperError(),
-                    'body' => $error->getResponseBody(),
-                ]);
+
+            $entities = $this->dataService->Query("SELECT * FROM Customer where Id='" . $this->customerId . "'");
+            if (empty($entities)) {
+                return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
             } else {
-                $response = json_encode([
-                    'code' => 200,
-                    'message' => 'OK',
-                    'body' => null,
-                ]);
+
+                $theCustomer = reset($entities);
+
+                $this->customerData['sparse'] = false;
+                $updateCustomer = Customer::update($theCustomer, $this->customerData);
+                $this->dataService->Update($updateCustomer);
+
+                $error = $this->dataService->getLastError();
+                if ($error) {
+                    $response = json_encode([
+                        'code' => $error->getHttpStatusCode(),
+                        'message' => $error->getOAuthHelperError(),
+                        'body' => $error->getResponseBody(),
+                    ]);
+                } else {
+                    $response = json_encode([
+                        'code' => 200,
+                        'message' => 'OK',
+                        'body' => null,
+                    ]);
+                }
+                return $response;
+
             }
-            return $response;
         }
 
         return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
 
     }
-
-
-    /**
-     * Update Invoice
-     *
-     * @return false|string
-     * @throws \QuickBooksOnline\API\Exception\IdsException
-     */
-    public function updateInvoice()
-    {
-
-        if (!empty($this->invoiceData)) {
-            $invoiceObj = Invoice::create($this->invoiceData);
-            $this->dataService->Update($invoiceObj);
-            $error = $this->dataService->getLastError();
-            if ($error) {
-                $response = json_encode([
-                    'code' => $error->getHttpStatusCode(),
-                    'message' => $error->getOAuthHelperError(),
-                    'body' => $error->getResponseBody(),
-                ]);
-            } else {
-                $response = json_encode([
-                    'code' => 200,
-                    'message' => 'OK',
-                    'body' => null,
-                ]);
-            }
-            return $response;
-        }
-
-        return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
-    }
-
 
 }

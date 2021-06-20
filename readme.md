@@ -45,8 +45,7 @@ use Medianova\LaravelAccounting\Facades\Accounting;
 
 Accounting::customer([])->create();
 Accounting::customer([],0)->update();
-Accounting::invoice([])->create();
-Accounting::invoice([],0)->update();
+Accounting::invoice([])->create(); 
 
 ```
 
