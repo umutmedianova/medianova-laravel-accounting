@@ -54,7 +54,7 @@ Accounting::invoice([],0)->update();
 
 ### Customer
 ```php
-Accounting::provider('quickbooks')->create([
+Accounting::provider('quickbooks')->customer([
   "BillAddr" => [
      "Line1"=>  "123 Main Street",
      "City"=>  "Mountain View",
@@ -77,12 +77,12 @@ Accounting::provider('quickbooks')->create([
  "PrimaryEmailAddr"=>  [
      "Address" => "evilkingw@myemail.com"
  ]
-], 'customer');
+])->create();
 ```
 
 ### Invoice
 ```php
-Accounting::provider('quickbooks')->create([
+Accounting::provider('quickbooks')->invoice([
      "Line" => [
    [
      "Amount" => 100.00,
@@ -107,5 +107,5 @@ Accounting::provider('quickbooks')->create([
       "BillEmailBcc" => [
             "Address" => "v@intuit.com"
       ]
-], 'invoice');
+])->create();
 ```
