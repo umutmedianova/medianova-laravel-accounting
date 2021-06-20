@@ -3,8 +3,6 @@
 namespace Medianova\LaravelAccounting\Providers;
 
 use Illuminate\Support\Facades\Cache;
-use QuickBooksOnline\API\Facades\Invoice;
-use QuickBooksOnline\API\Facades\Customer;
 
 use Medianova\LaravelAccounting\Interfaces\AccountingInterface;
 use Medianova\LaravelAccounting\Exceptions\LaravelAccountingException;
