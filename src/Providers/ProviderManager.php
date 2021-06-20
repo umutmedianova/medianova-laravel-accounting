@@ -1,4 +1,5 @@
 <?php
+
 namespace Medianova\LaravelAccounting\Providers;
 
 use Illuminate\Support\Str;
@@ -8,6 +9,25 @@ use Medianova\LaravelAccounting\Exceptions\LaravelAccountingProviderException;
 
 class ProviderManager
 {
+
+    /**
+     * @var
+     */
+    protected $id;
+
+    /**
+     * @var
+     */
+    protected $type;
+
+    /**
+     * @var
+     */
+    protected $data;
+
+    /**
+     * @var
+     */
     protected $provider;
 
     /**
@@ -24,7 +44,7 @@ class ProviderManager
      */
     public function __autoload($class_name)
     {
-        include_once($class_name.".php");
+        include_once($class_name . ".php");
     }
 
     /**
@@ -56,24 +76,48 @@ class ProviderManager
     }
 
     /**
-     * Create function
+     * Customer function
      *
      * @param $data
-     * @param string $type
+     * @param $id
      * @return mixed
      * @throws LaravelAccountingException
      */
-    public function create($data, string $type = 'customer')
+    public function customer($data = null, $id = null)
     {
 
-        if ($type == null) {
+        if ($data == null) {
             return false;
-        }else {
+        } else {
 
             try {
-                return $this->provider->create($data, $type);
+                return $this->provider->customer($data, $id);
             } catch (LaravelAccountingProviderException $e) {
-                throw new LaravelAccountingException("Create Error!");
+                throw new LaravelAccountingException("Customer Error!");
+            }
+        }
+    }
+
+    /**
+     * Invoice function
+     *
+     * @param $data
+     * @param $id
+     * @return mixed
+     * @throws LaravelAccountingException
+     */
+    public function invoice($data = null, $id = null)
+    {
+
+        if ($data == null) {
+            return false;
+        } else {
+
+            try {
+                $this->data = $data;
+                return $this->provider->invoice($data, $id);
+            } catch (LaravelAccountingProviderException $e) {
+                throw new LaravelAccountingException("Invoice Error!");
             }
         }
     }

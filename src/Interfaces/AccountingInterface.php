@@ -3,5 +3,8 @@ namespace Medianova\LaravelAccounting\Interfaces;
 
 interface AccountingInterface
 {
-    public function create($data, $type);
+    public function customer($data);
+    public function invoice($data);
+    public function create();
+    public function update();
 }

@@ -12,7 +12,7 @@ class QuickbooksTest extends TestCase
      */
     public function testCustomerCreate()
     {
-        $response = Accounting::create([
+        $response = Accounting::customer([
             "BillAddr" => [
                 "Line1" => "123 Main Street",
                 "City" => "Mountain View",
@@ -35,7 +35,7 @@ class QuickbooksTest extends TestCase
             "PrimaryEmailAddr" => [
                 "Address" => "evilkingw@myemail.com"
             ]
-        ], 'customer');
+        ])->create();
 
         $res = (array) json_decode($response);
         $this->assertEquals(400, $res['code']);
@@ -49,7 +49,7 @@ class QuickbooksTest extends TestCase
     public
     function testInvoiceCreate()
     {
-        $response = Accounting::create([
+        $response = Accounting::invoice([
             "Line" => [
                 [
                     "Amount" => 100.00,
@@ -74,7 +74,8 @@ class QuickbooksTest extends TestCase
             "BillEmailBcc" => [
                 "Address" => "v@intuit.com"
             ]
-        ], 'invoice');
+        ])->create();
+        
         $res = (array) json_decode($response);
         $this->assertEquals(400, $res['code']);
 

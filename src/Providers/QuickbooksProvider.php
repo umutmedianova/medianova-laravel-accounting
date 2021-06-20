@@ -3,13 +3,8 @@
 namespace Medianova\LaravelAccounting\Providers;
 
 use Illuminate\Support\Facades\Cache;
-use PhpParser\Node\Expr\Throw_;
-
-use QuickBooksOnline\API\Core\ServiceContext;
 use QuickBooksOnline\API\DataService\DataService;
 use QuickBooksOnline\API\Facades\Invoice;
-use QuickBooksOnline\API\PlatformService\PlatformService;
-use QuickBooksOnline\API\Core\Http\Serialization\XmlObjectSerializer;
 use QuickBooksOnline\API\Facades\Customer;
 
 use Medianova\LaravelAccounting\Interfaces\AccountingInterface;
@@ -31,6 +26,11 @@ class QuickbooksProvider implements AccountingInterface
     public $base_url;
 
     protected $dataService;
+    protected $customerId;
+    protected $customerData;
+    protected $invoiceId;
+    protected $invoiceData;
+    protected $type;
     protected $response;
 
     /**
@@ -93,18 +93,45 @@ class QuickbooksProvider implements AccountingInterface
         });
     }
 
+
     /**
-     * @param $data
-     * @param string $type
+     * @param array $data
+     * @param $id
      * @return Mixed
      */
-    public function create($data, $type = 'customer')
+    public function customer($data = [], $id = null)
     {
-        switch ($type) {
+        $this->customerId = $id;
+        $this->customerData = $data;
+        $this->type = 'customer';
+        return $this;
+    }
+
+    /**
+     * @param array $data
+     * @param $id
+     * @return Mixed
+     */
+    public function invoice($data = [], $id = null)
+    {
+        $this->invoiceId = $id;
+        $this->invoiceData = $data;
+        $this->type = 'invoice';
+        return $this;
+    }
+
+    /**
+     * Create
+     *
+     * @return Mixed
+     */
+    public function create()
+    {
+        switch ($this->type) {
             case 'customer':
-                return $this->createCustomer($data);
+                return $this->createCustomer();
             case 'invoice':
-                return $this->createInvoice($data);
+                return $this->createInvoice();
             default:
                 return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);;
         }
@@ -113,14 +140,13 @@ class QuickbooksProvider implements AccountingInterface
     /**
      * Create Customer
      *
-     * @param array $data
      * @return Mixed
      */
-    public function createCustomer(array $data = [])
+    public function createCustomer()
     {
 
-        if (!empty($data)) {
-            $customerObj = Customer::create($data);
+        if (!empty($this->customerData)) {
+            $customerObj = Customer::create($this->customerData);
             $this->dataService->Add($customerObj);
             $error = $this->dataService->getLastError();
             if ($error) {
@@ -147,15 +173,70 @@ class QuickbooksProvider implements AccountingInterface
     /**
      * Create Invoice
      *
-     * @param array $data
      * @return Mixed
      */
-    public function createInvoice(array $data = [])
+    public function createInvoice()
     {
 
-        if (!empty($data)) {
-            $customerObj = Invoice::create($data);
-            $this->dataService->Add($customerObj);
+        if (!empty($this->invoiceData)) {
+            $invoiceObj = Invoice::create($this->invoiceData);
+            $this->dataService->Add($invoiceObj);
+            $error = $this->dataService->getLastError();
+            if ($error) {
+                $response = json_encode([
+                    'code' => $error->getHttpStatusCode(),
+                    'message' => $error->getOAuthHelperError(),
+                    'body' => $error->getResponseBody(),
+                ]);
+            } else {
+                $response = json_encode([
+                    'code' => 200,
+                    'message' => 'OK',
+                    'body' => null,
+                ]);
+            }
+            return $response;
+        }
+
+        return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
+    }
+
+
+    /**
+     * Update
+     *
+     * @return Mixed
+     * @throws \QuickBooksOnline\API\Exception\IdsException
+     */
+    public function update()
+    {
+
+        if ($this->customerId == null && $this->invoiceId == null) {
+            throw new LaravelAccountingException("ID NOT FOUND ERROR!");
+        } else {
+            switch ($this->type) {
+                case 'customer':
+                    return $this->updateCustomer();
+                case 'invoice':
+                    return $this->updateInvoice();
+                default:
+                    return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);;
+            }
+        }
+    }
+
+    /**
+     * Update Customer
+     *
+     * @return false|string
+     * @throws \QuickBooksOnline\API\Exception\IdsException
+     */
+    public function updateCustomer()
+    {
+
+        if (!empty($this->customerData)) {
+            $customerObj = Customer::create($this->customerData);
+            $this->dataService->Update($customerObj);
             $error = $this->dataService->getLastError();
             if ($error) {
                 $response = json_encode([
@@ -175,7 +256,40 @@ class QuickbooksProvider implements AccountingInterface
 
         return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
 
-
     }
+
+
+    /**
+     * Update Invoice
+     *
+     * @return false|string
+     * @throws \QuickBooksOnline\API\Exception\IdsException
+     */
+    public function updateInvoice()
+    {
+
+        if (!empty($this->invoiceData)) {
+            $invoiceObj = Invoice::create($this->invoiceData);
+            $this->dataService->Update($invoiceObj);
+            $error = $this->dataService->getLastError();
+            if ($error) {
+                $response = json_encode([
+                    'code' => $error->getHttpStatusCode(),
+                    'message' => $error->getOAuthHelperError(),
+                    'body' => $error->getResponseBody(),
+                ]);
+            } else {
+                $response = json_encode([
+                    'code' => 200,
+                    'message' => 'OK',
+                    'body' => null,
+                ]);
+            }
+            return $response;
+        }
+
+        return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
+    }
+
 
 }
