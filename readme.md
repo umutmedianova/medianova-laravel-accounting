@@ -43,8 +43,10 @@ return [
 
 use Medianova\LaravelAccounting\Facades\Accounting;
 
-Accounting::create([], 'customer');
-Accounting::create([], 'invoice');
+Accounting::customer([])->create();
+Accounting::customer([],0)->update();
+Accounting::invoice([])->create();
+Accounting::invoice([],0)->update();
 
 ```
 
