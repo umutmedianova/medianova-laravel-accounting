@@ -63,11 +63,14 @@ class LogoProvider implements AccountingInterface
         return Cache::remember('accounting-logo-api-token', 3500, function () {
             $this->response = $this->http_client->request('POST', $this->base_url . '/' . 'token', [
                 'form_params' => [
+                    'grant_type' => 'password',
                     'username' => $this->username,
                     'password' => $this->password,
                 ]
             ]);
-            return json_decode($this->response->getBody());
+
+            $body = json_decode($this->response->getBody());
+            return $body['access_token'];
         });
     }
 

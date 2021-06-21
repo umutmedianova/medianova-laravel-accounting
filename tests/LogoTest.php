@@ -4,7 +4,7 @@ namespace Medianova\LaravelAccounting\Test;
 
 use Medianova\LaravelAccounting\Facades\Accounting;
 
-class QuickbooksTest extends TestCase
+class LogoTest extends TestCase
 {
     /**
      * Create Customer
@@ -12,7 +12,7 @@ class QuickbooksTest extends TestCase
      */
     public function testCustomerCreate()
     {
-        $response = Accounting::provider('quickbooks')->customer([
+        $response = Accounting::provider('logo')->customer([
             "BillAddr" => [
                 "Line1" => "123 Main Street",
                 "City" => "Mountain View",
@@ -49,7 +49,7 @@ class QuickbooksTest extends TestCase
     public
     function testInvoiceCreate()
     {
-        $response = Accounting::provider('quickbooks')->invoice([
+        $response = Accounting::provider('logo')->invoice([
             "Line" => [
                 [
                     "Amount" => 100.00,
@@ -75,7 +75,7 @@ class QuickbooksTest extends TestCase
                 "Address" => "v@intuit.com"
             ]
         ])->create();
-        
+
         $res = (array) json_decode($response);
         $this->assertEquals(400, $res['code']);
 
