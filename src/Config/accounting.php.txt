@@ -3,9 +3,10 @@
 return [
     'provider'=>env('ACCOUNTING_PROVIDER', 'quickbooks'),
     'logo'=>[
-        'base_url' =>  env('ACCOUNTING_BASE_URL', 'http://localhost'),
-        'username' => env('ACCOUNTING_USERNAME', 'XXXXXXXXXXXXX'),
-        'password' => env('ACCOUNTING_PASSWORD', 'XXXXXXXXXXXXX'),
+        'base_url' =>  env('ACCOUNTING_LOGO_BASE_URL', 'http://localhost'),
+        'username' => env('ACCOUNTING_LOGO_USERNAME', 'XXXXXXXXXXXXX'),
+        'password' => env('ACCOUNTING_LOGO_PASSWORD', 'XXXXXXXXXXXXX'),
+        'company_id' => env('ACCOUNTING_LOGO_COMPANY_ID', 'XXXXXXXXXXXXX'),
     ],
     'quickbooks'=>[
         'access_token' => env('ACCOUNTING_ACCESS_TOKEN', 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'),

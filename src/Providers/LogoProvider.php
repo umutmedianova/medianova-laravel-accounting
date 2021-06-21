@@ -2,6 +2,7 @@
 
 namespace Medianova\LaravelAccounting\Providers;
 
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 
 use Medianova\LaravelAccounting\Interfaces\AccountingInterface;
@@ -11,11 +12,9 @@ class LogoProvider implements AccountingInterface
 {
 
     public $access_token;
-    public $refresh_token;
-    public $real_me_id;
+    public $company_id;
     public $username;
     public $password;
-    public $redirect_url;
     public $base_url;
 
     protected $dataService;
@@ -26,6 +25,8 @@ class LogoProvider implements AccountingInterface
     protected $type;
     protected $response;
 
+    protected $http_client;
+
     /**
      * LogoProvider constructor.
      * @throws LaravelAccountingException
@@ -34,34 +35,39 @@ class LogoProvider implements AccountingInterface
     {
 
         // Variables
-        $this->access_token = config('accounting.quickbooks.access_token');
-        $this->refresh_token = config('accounting.quickbooks.refresh_token');
-        $this->real_me_id = config('accounting.quickbooks.real_me_id');
-        $this->username = config('accounting.quickbooks.username');
-        $this->password = config('accounting.quickbooks.password');
-        $this->redirect_url = config('accounting.quickbooks.redirect_url');
-        $this->base_url = config('accounting.quickbooks.base_url');
+        $this->base_url = config('accounting.logo.base_url');
+        $this->username = config('accounting.logo.username');
+        $this->password = config('accounting.logo.password');
+        $this->company_id = config('accounting.logo.company_id');
 
-        /**
-         *
-         *
-         * LOGO CONNECT !
-         * $this->login();
-         *
-         *
-         */
+        // Client
+        $this->http_client = new Client([
+            'base_uri' => $this->base_url,
+        ]);
+
+        // Update Token
+        $access_token = Cache::get('accounting-logo-api-token', null);
+        if (empty($access_token)) {
+            $this->access_token = $this->login();
+        } else {
+            $this->access_token = $access_token;
+        }
 
     }
-
 
     /**
      * @return mixed
      */
     public function login()
     {
-        return Cache::remember('accounting-api-token', 3500, function () {
-
-            return false;
+        return Cache::remember('accounting-logo-api-token', 3500, function () {
+            $this->response = $this->http_client->request('POST', $this->base_url . '/' . 'token', [
+                'form_params' => [
+                    'username' => $this->username,
+                    'password' => $this->password,
+                ]
+            ]);
+            return json_decode($this->response->getBody());
         });
     }
 
@@ -190,6 +196,8 @@ class LogoProvider implements AccountingInterface
             switch ($this->type) {
                 case 'customer':
                     return $this->updateCustomer();
+                case 'invoice':
+                    return $this->updateInvoice();
                 default:
                     return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);;
             }
@@ -214,6 +222,28 @@ class LogoProvider implements AccountingInterface
              */
         }
 
+        return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
+
+    }
+
+
+    /**
+     * Update Invoice
+     *
+     * @return false|string
+     */
+    public function updateInvoice()
+    {
+
+        if (!empty($this->invoiceData)) {
+
+            /**
+             *
+             * FATURA GÜNCELLE
+             *
+             *
+             */
+        }
         return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
 
     }
