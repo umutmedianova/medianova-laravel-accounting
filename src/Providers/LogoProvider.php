@@ -180,7 +180,6 @@ class LogoProvider implements AccountingInterface
      * Update
      *
      * @return Mixed
-     * @throws \QuickBooksOnline\API\Exception\IdsException
      */
     public function update()
     {
@@ -201,7 +200,6 @@ class LogoProvider implements AccountingInterface
      * Update Customer
      *
      * @return false|string
-     * @throws \QuickBooksOnline\API\Exception\IdsException
      */
     public function updateCustomer()
     {

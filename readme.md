@@ -46,12 +46,13 @@ use Medianova\LaravelAccounting\Facades\Accounting;
 Accounting::customer([])->create();
 Accounting::customer([],0)->update();
 Accounting::invoice([])->create(); 
+Accounting::invoice([],0)->update(); 
 
 ```
 
 ## Or use by choosing a provider
 
-### Customer
+### Customer Create
 ```php
 Accounting::provider('quickbooks')->customer([
   "BillAddr" => [
@@ -79,7 +80,16 @@ Accounting::provider('quickbooks')->customer([
 ])->create();
 ```
 
-### Invoice
+### Customer Update
+```php
+Accounting::provider('quickbooks')->customer([
+ "PrimaryEmailAddr"=>  [
+     "Address" => "umut.cetinkaya@medianova.com"
+ ]
+],56)->update();
+```
+
+### Invoice Create
 ```php
 Accounting::provider('quickbooks')->invoice([
      "Line" => [
@@ -107,4 +117,13 @@ Accounting::provider('quickbooks')->invoice([
             "Address" => "v@intuit.com"
       ]
 ])->create();
+```
+
+### Invoice Update
+```php
+Accounting::provider('quickbooks')->invoice([
+      "BillEmail" => [
+            "Address" => "Familiystore@intuit.com"
+      ]
+],111)->update();
 ```
