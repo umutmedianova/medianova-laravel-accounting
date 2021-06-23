@@ -41,9 +41,7 @@ class LogoProvider implements AccountingInterface
         $this->company_id = config('accounting.logo.company_id');
 
         // Client
-        $this->http_client = new Client([
-            'base_uri' => $this->base_url,
-        ]);
+        $this->http_client = new Client(['base_uri' => $this->base_url]);
 
         // Update Token
         $access_token = Cache::get('accounting-logo-api-token', null);
@@ -69,7 +67,7 @@ class LogoProvider implements AccountingInterface
                 ]
             ]);
 
-            $body = json_decode($this->response->getBody());
+            $body = (array)json_decode($this->response->getBody());
             return $body['access_token'];
         });
     }
@@ -125,26 +123,17 @@ class LogoProvider implements AccountingInterface
      */
     public function createCustomer()
     {
-
         if (!empty($this->customerData)) {
-            /**
-             *
-             *
-             *  LOGO CARI KAYIT
-             *
-             *
-             */
-            $error = false;
-            if ($error) {
-                $response = json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
-            } else {
-                $response = json_encode([
-                    'code' => 200,
-                    'message' => 'OK',
-                    'body' => null,
-                ]);
-            }
-            return $response;
+
+            $this->response = $this->http_client->request('POST', $this->base_url . '/' . 'api/CariKayitEkle', [
+                'form_params' => $this->customerData,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->access_token,
+                    'Accept' => 'application/json',
+                ]
+            ]);
+            $body = (array)json_decode($this->response->getBody());
+            return $this->response($body);
         }
 
         return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
@@ -161,24 +150,15 @@ class LogoProvider implements AccountingInterface
     {
 
         if (!empty($this->invoiceData)) {
-            /**
-             *
-             *
-             *  LOGO FATURA KAYIT
-             *
-             *
-             */
-            $error = false;
-            if ($error) {
-                $response = json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
-            } else {
-                $response = json_encode([
-                    'code' => 200,
-                    'message' => 'OK',
-                    'body' => null,
-                ]);
-            }
-            return $response;
+            $this->response = $this->http_client->request('POST', $this->base_url . '/' . 'api/SatisFaturasiKayit', [
+                'form_params' => $this->invoiceData,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->access_token,
+                    'Accept' => 'application/json',
+                ]
+            ]);
+            $body = (array)json_decode($this->response->getBody());
+            return $this->response($body);
         }
 
         return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
@@ -217,12 +197,15 @@ class LogoProvider implements AccountingInterface
 
         if (!empty($this->customerData)) {
 
-            /**
-             *
-             * CARI GÜNCELLE
-             *
-             *
-             */
+            $this->response = $this->http_client->request('POST', $this->base_url . '/' . 'api/CariKayitGuncelle', [
+                'form_params' => $this->customerData,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->access_token,
+                    'Accept' => 'application/json',
+                ]
+            ]);
+            $body = (array)json_decode($this->response->getBody());
+            return $this->response($body);
         }
 
         return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
@@ -249,6 +232,34 @@ class LogoProvider implements AccountingInterface
         }
         return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
 
+    }
+
+
+    /**
+     * @param $body
+     * @return false|string
+     */
+    public function response($body)
+    {
+        if (array_key_exists('sonuc', $body)) {
+            $error = $body['sonuc'];
+        } else if (array_key_exists('Sonuc', $body)) {
+            $error = $body['Sonuc'];
+        } else {
+            $error = false;
+        }
+
+        if (!$error) {
+            $response = json_encode(['code' => 401, 'message' => 'Error', 'body' => $body]);
+        } else {
+            $response = json_encode([
+                'code' => 200,
+                'message' => 'OK',
+                'body' => $body,
+            ]);
+        }
+
+        return $response;
     }
 
 }

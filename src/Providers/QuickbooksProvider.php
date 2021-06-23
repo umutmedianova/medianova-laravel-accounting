@@ -9,6 +9,8 @@ use QuickBooksOnline\API\Facades\Customer;
 
 use Medianova\LaravelAccounting\Interfaces\AccountingInterface;
 use Medianova\LaravelAccounting\Exceptions\LaravelAccountingException;
+use QuickBooksOnline\API\ReportService\ReportName;
+use QuickBooksOnline\API\ReportService\ReportService;
 
 class QuickbooksProvider implements AccountingInterface
 {
@@ -53,8 +55,8 @@ class QuickbooksProvider implements AccountingInterface
         $this->scope = config('accounting.quickbooks.scope');
         $this->base_url = config('accounting.quickbooks.base_url');
 
-        // Service created
-        $this->dataService = DataService::Configure(array(
+        // Options
+        $options = array(
             'auth_mode' => 'oauth2',
             'ClientID' => $this->client_id,
             'ClientSecret' => $this->client_secret,
@@ -64,15 +66,18 @@ class QuickbooksProvider implements AccountingInterface
             'RedirectURI' => $this->redirect_url,
             'scope' => $this->scope,
             'baseUrl' => "development"
-        ));
+        );
 
         // Update Token
         $access_token = Cache::get('accounting-api-token', null);
-        if (empty($access_token)) {
-            $this->access_token = $this->login();
-        } else {
+        if (!empty($access_token)) {
             $this->access_token = $access_token;
+            $this->dataService = DataService::Configure($options);
+        } else {
+            $this->dataService = DataService::Configure($options);
+            $this->access_token = $this->login();
         }
+
         if ($this->access_token != null) {
             $this->dataService->updateOAuth2Token($this->access_token);
         } else {
@@ -117,6 +122,17 @@ class QuickbooksProvider implements AccountingInterface
         $this->invoiceId = $id;
         $this->invoiceData = $data;
         $this->type = 'invoice';
+        return $this;
+    }
+
+    /**
+     * @param $id
+     * @return Mixed
+     */
+    public function transactions($id = null)
+    {
+        $this->customerId = $id;
+        $this->type = 'transactions';
         return $this;
     }
 
@@ -314,6 +330,50 @@ class QuickbooksProvider implements AccountingInterface
 
         return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
 
+    }
+
+
+    /**
+     * Get
+     *
+     * @return Mixed
+     */
+    public function get()
+    {
+        switch ($this->type) {
+            case 'transactions':
+                return $this->getTransactions();
+            default:
+                return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);;
+        }
+    }
+
+
+    /**
+     * Get Transactions
+     *
+     * @return array
+     * @throws \QuickBooksOnline\API\Exception\SdkExceptions\InvalidParameterException
+     */
+    public function getTransactions()
+    {
+        if (!empty($this->customerId)) {
+
+            $serviceContext = $this->dataService->getServiceContext();
+
+            $reportService = new ReportService($serviceContext);
+            if (!$reportService) {
+                throw new LaravelAccountingException("Problem while initializing ReportService!");
+            }
+
+            $reportService->setStartDate("2015-01-01");
+            $reportService->setAccountingMethod("Accrual");
+            $customerBalanceReport = $reportService->executeReport(ReportName::CUSTOMERBALANCE);
+
+
+        } else {
+            return [];
+        }
     }
 
 }

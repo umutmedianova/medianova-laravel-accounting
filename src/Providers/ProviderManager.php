@@ -63,7 +63,7 @@ class ProviderManager
 
             $file = dirname(__FILE__) . '/' . $class_name . ".php";
             if (!file_exists($file)) {
-                throw new LaravelAccountingException("We could not found Provider  : {$file}");
+                throw new LaravelAccountingProviderException("We could not found Provider  : {$file}");
             }
             $provider = resolve("Medianova\\LaravelAccounting\\Providers\\" . $class_name);
             $this->provider = $provider;
@@ -93,7 +93,7 @@ class ProviderManager
             try {
                 return $this->provider->customer($data, $id);
             } catch (LaravelAccountingProviderException $e) {
-                throw new LaravelAccountingException("Customer Error!");
+                throw new LaravelAccountingProviderException("Customer Error!");
             }
         }
     }
@@ -117,7 +117,7 @@ class ProviderManager
                 $this->data = $data;
                 return $this->provider->invoice($data, $id);
             } catch (LaravelAccountingProviderException $e) {
-                throw new LaravelAccountingException("Invoice Error!");
+                throw new LaravelAccountingProviderException("Invoice Error!");
             }
         }
     }
