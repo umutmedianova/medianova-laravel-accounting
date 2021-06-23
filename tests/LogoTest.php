@@ -13,31 +13,25 @@ class LogoTest extends TestCase
     public function testCustomerCreate()
     {
         $response = Accounting::provider('logo')->customer([
-            "BillAddr" => [
-                "Line1" => "123 Main Street",
-                "City" => "Mountain View",
-                "Country" => "USA",
-                "CountrySubDivisionCode" => "CA",
-                "PostalCode" => "94042"
-            ],
-            "Notes" => "Here are other details.",
-            "Title" => "Mr",
-            "GivenName" => "Evil",
-            "MiddleName" => "1B",
-            "FamilyName" => "King",
-            "Suffix" => "Jr",
-            "FullyQualifiedName" => "Evil King",
-            "CompanyName" => "King Evial",
-            "DisplayName" => "Umut Cetinkaya",
-            "PrimaryPhone" => [
-                "FreeFormNumber" => "(555) 555-5555"
-            ],
-            "PrimaryEmailAddr" => [
-                "Address" => "evilkingw@myemail.com"
-            ]
+            "FirmNr" => 999,
+            "Kod" => "120.01.TEST223",
+            "Unvan" => "B NAKLİYAT LTD. ŞTİ",
+            "Adres" => "KAPTANPAŞA MAH. ZİYA TÜRKKAN SOK. NO=>1",
+            "Semt" => "OKMEYDANI",
+            "Ilce" => "ŞİŞLİ",
+            "Il" => "İSTANBUL",
+            "Ulke" => "TÜRKİYE",
+            "Telefon1" => "02123201111",
+            "Telefon2" => "",
+            "FaksNo" => "02123201111",
+            "Email" => "destek2@binport.com.tr",
+            "VergiDairesi" => "ŞİŞLİ",
+            "TCKimlik_Vergino" => "1111111116",
+            "EIsKodu" => "1111111116",
+            "EfaturaDurumu" => false
         ])->create();
 
-        $res = (array) json_decode($response);
+        $res = (array)json_decode($response);
         $this->assertEquals(400, $res['code']);
 
     }
@@ -46,39 +40,85 @@ class LogoTest extends TestCase
      * Create Invoice
      * @return void
      */
-    public
-    function testInvoiceCreate()
+    public function testInvoiceCreate()
     {
         $response = Accounting::provider('logo')->invoice([
-            "Line" => [
+            "FirmNr" => 999,
+            "Numara" => "~",
+            "FaturaTuru" => 9,
+            "Tarih" => "2021-06-19T18=>03=>50.9924036+03=>00",
+            "Saat" => "16=>00",
+            "Isyeri" => 0,
+            "Ambar" => 0,
+            "OdemeSekli" => "",
+            "Satirlar" => [
                 [
-                    "Amount" => 100.00,
-                    "DetailType" => "SalesItemLineDetail",
-                    "SalesItemLineDetail" => [
-                        "ItemRef" => [
-                            "value" => 20,
-                            "name" => "Hours"
+                    "SatirTuru" => 4,
+                    "UrunBilgisi" => [
+                        "FirmNr" => 999,
+                        "Kod" => "TEST_HİZMET",
+                        "UrunAdi" => "TEST_HİZMET",
+                        "Birim" => "ADET",
+                        "SeriLotTakibi" => false,
+                        "UrunYoksaKaydet" => false,
+                        "UrunGuncelle" => false,
+                        "EIsKodu" => ""
+                    ],
+                    "Miktar" => 1,
+                    "KDV" => 180,
+                    "Birim" => "ADET",
+                    "Fiyat" => 1000,
+                    "Indirimler" => [
+                        [
+                            "Oran" => 5,
+                            "Tutar" => 50
+                        ],
+                        [
+                            "Oran" => 0,
+                            "Tutar" => 0
                         ]
-                    ]
+                    ],
+                    "SiparisId" => ""
+                ],
+                [
+                    "SatirTuru" => 4,
+                    "UrunBilgisi" => [
+                        "FirmNr" => 999,
+                        "Kod" => "TEST_HİZMET_2",
+                        "UrunAdi" => "TEST_HİZMET_2",
+                        "Birim" => "ADET",
+                        "SeriLotTakibi" => false,
+                        "UrunYoksaKaydet" => false,
+                        "UrunGuncelle" => false,
+                        "EIsKodu" => ""
+                    ],
+                    "Miktar" => 1,
+                    "KDV" => 380,
+                    "Birim" => "ADET",
+                    "Fiyat" => 2000,
+                    "Indirimler" => [
+                        [
+                            "Oran" => 5,
+                            "Tutar" => 100
+                        ],
+                        [
+                            "Oran" => 0,
+                            "Tutar" => 0
+                        ]
+                    ],
+                    "SiparisId" => ""
                 ]
             ],
-            "CustomerRef" => [
-                "value" => 59
-            ],
-            "BillEmail" => [
-                "Address" => "Familiystore@intuit.com"
-            ],
-            "BillEmailCc" => [
-                "Address" => "a@intuit.com"
-            ],
-            "BillEmailBcc" => [
-                "Address" => "v@intuit.com"
-            ]
+            "EIsKodu" => "",
+            "GenelAciklama" => "",
+            "Not2" => "",
+            "Not3" => "",
+            "Not4" => "",
+            "VadeGunu" => 0,
+            "SatisElemani" => ""
         ])->create();
-
-        $res = (array) json_decode($response);
+        $res = (array)json_decode($response);
         $this->assertEquals(400, $res['code']);
-
     }
 
 }

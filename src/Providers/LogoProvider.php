@@ -126,10 +126,11 @@ class LogoProvider implements AccountingInterface
         if (!empty($this->customerData)) {
 
             $this->response = $this->http_client->request('POST', $this->base_url . '/' . 'api/CariKayitEkle', [
-                'form_params' => $this->customerData,
+                'body' => json_encode($this->customerData),
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->access_token,
                     'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
                 ]
             ]);
             $body = (array)json_decode($this->response->getBody());
@@ -198,10 +199,11 @@ class LogoProvider implements AccountingInterface
         if (!empty($this->customerData)) {
 
             $this->response = $this->http_client->request('PUT', $this->base_url . '/' . 'api/CariKayitGuncelle', [
-                'form_params' => $this->customerData,
+                'body' => json_encode($this->customerData),
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->access_token,
                     'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
                 ]
             ]);
             $body = (array)json_decode($this->response->getBody());
