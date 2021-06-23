@@ -197,7 +197,7 @@ class LogoProvider implements AccountingInterface
 
         if (!empty($this->customerData)) {
 
-            $this->response = $this->http_client->request('POST', $this->base_url . '/' . 'api/CariKayitGuncelle', [
+            $this->response = $this->http_client->request('PUT', $this->base_url . '/' . 'api/CariKayitGuncelle', [
                 'form_params' => $this->customerData,
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->access_token,
