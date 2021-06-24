@@ -180,8 +180,6 @@ class LogoProvider implements AccountingInterface
             switch ($this->type) {
                 case 'customer':
                     return $this->updateCustomer();
-                case 'invoice':
-                    return $this->updateInvoice();
                 default:
                     return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);;
             }
@@ -210,28 +208,6 @@ class LogoProvider implements AccountingInterface
             return $this->response($body);
         }
 
-        return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
-
-    }
-
-
-    /**
-     * Update Invoice
-     *
-     * @return false|string
-     */
-    public function updateInvoice()
-    {
-
-        if (!empty($this->invoiceData)) {
-
-            /**
-             *
-             * FATURA GÜNCELLE
-             *
-             *
-             */
-        }
         return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
 
     }
