@@ -121,4 +121,25 @@ class LogoTest extends TestCase
         $this->assertEquals(400, $res['code']);
     }
 
+    /**
+     * Get Transactions
+     * @return void
+     */
+    public function testGetTransactions()
+    {
+        $response = Accounting::provider('logo')->transactions(
+            [
+                "FirmNr" => 999,
+                "DonemNr" => 1,
+                "BaslangicTarihi" => "2021-01-01T16:43:49.2530818+03:00",
+                "BitisTarihi" => "2021-06-26T16:43:49.2530818+03:00",
+                "Kod" => [
+                    "120.01.TEST10"
+                ]
+            ]
+        )->get();
+        $res = (array)json_decode($response);
+        $this->assertEquals(200, $res['code']);
+    }
+
 }

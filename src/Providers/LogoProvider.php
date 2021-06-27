@@ -22,6 +22,7 @@ class LogoProvider implements AccountingInterface
     protected $customerData;
     protected $invoiceId;
     protected $invoiceData;
+    protected $searchData;
     protected $type;
     protected $response;
 
@@ -96,6 +97,18 @@ class LogoProvider implements AccountingInterface
         $this->invoiceId = $id;
         $this->invoiceData = $data;
         $this->type = 'invoice';
+        return $this;
+    }
+
+    /**
+     * @param array $data
+     * @param $id
+     * @return Mixed
+     */
+    public function transactions($data = [])
+    {
+        $this->searchData = $data;
+        $this->type = 'transactions';
         return $this;
     }
 
@@ -238,6 +251,47 @@ class LogoProvider implements AccountingInterface
         }
 
         return $response;
+    }
+
+    /**
+     * Get
+     *
+     * @return Mixed
+     */
+    public function get()
+    {
+        switch ($this->type) {
+            case 'transactions':
+                return $this->getTransactions();
+            default:
+                return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);;
+        }
+    }
+
+
+    /**
+     * Get Transactions
+     *
+     * @return array|false|string
+     */
+    public function getTransactions()
+    {
+        if (!empty($this->searchData)) {
+
+            $this->response = $this->http_client->request('GET', $this->base_url . '/' . 'api/CariHesapEkstresi', [
+                'body' => json_encode($this->searchData),
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->access_token,
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                ]
+            ]);
+            $body = (array)json_decode($this->response->getBody());
+            return json_encode(['code' => 200, 'message' => 'OK', 'body' => $body]);
+
+        } else {
+            return json_encode(['code' => 401, 'message' => 'Error', 'body' => null]);
+        }
     }
 
 }

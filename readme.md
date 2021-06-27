@@ -128,3 +128,18 @@ Accounting::provider('quickbooks')->invoice([
       ]
 ],111)->update();
 ```
+
+### Get Transaction Logo
+```php
+Accounting::provider('logo')->transactions(
+    [
+        "FirmNr" => 999,
+        "DonemNr" => 1,
+        "BaslangicTarihi" => "2021-01-01T16:43:49.2530818+03:00",
+        "BitisTarihi" => "2021-06-26T16:43:49.2530818+03:00",
+        "Kod" => [
+            "120.01.TEST10"
+        ]
+    ]
+)->get();
+```

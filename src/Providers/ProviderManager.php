@@ -122,4 +122,28 @@ class ProviderManager
         }
     }
 
+    /**
+     * Transaction function
+     *
+     * @param $data
+     * @param $id
+     * @return mixed
+     * @throws LaravelAccountingException
+     */
+    public function transactions($data = null)
+    {
+
+        if ($data == null) {
+            return false;
+        } else {
+
+            try {
+                $this->data = $data;
+                return $this->provider->transactions($data);
+            } catch (LaravelAccountingProviderException $e) {
+                throw new LaravelAccountingProviderException("Transactions Error!");
+            }
+        }
+    }
+
 }
