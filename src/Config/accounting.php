@@ -3,9 +3,9 @@
 return [
     'provider'=>env('ACCOUNTING_PROVIDER', 'logo'),
     'logo'=>[
-        'base_url' =>  env('ACCOUNTING_LOGO_BASE_URL', 'http://89.145.186.214:8090'),
-        'username' => env('ACCOUNTING_LOGO_USERNAME', 'medianova'),
-        'password' => env('ACCOUNTING_LOGO_PASSWORD', 'MediANOva2021*!'),
+        'base_url' =>  env('ACCOUNTING_LOGO_BASE_URL', '***'),
+        'username' => env('ACCOUNTING_LOGO_USERNAME', '***'),
+        'password' => env('ACCOUNTING_LOGO_PASSWORD', '***'),
         'company_id' => env('ACCOUNTING_LOGO_COMPANY_ID', 999),
     ],
     'quickbooks'=>[
