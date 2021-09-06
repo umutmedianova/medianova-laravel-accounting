@@ -46,6 +46,7 @@ class LogoProvider implements AccountingInterface
 
         // Update Token
         $access_token = Cache::get('accounting-logo-api-token', null);
+
         if (empty($access_token)) {
             $this->access_token = $this->login();
         } else {
@@ -95,9 +96,76 @@ class LogoProvider implements AccountingInterface
     public function invoice($data = [], $id = null)
     {
         $this->invoiceId = $id;
-        $this->invoiceData = $data;
+        $this->invoiceData = $this->invoiceDataTransform($data);
         $this->type = 'invoice';
         return $this;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function invoiceDataTransform($data = []){
+
+        if(is_array($data) && count($data) > 0) {
+            $TData = [
+                'FirmNr' => $data['FirmNumber'] ?? 999,
+                'Numara' => $data['InvoiceNumber'] ?? "~",
+                'FaturaTuru' => $data['InvoiceType'] ?? 9,
+                'Isyeri' => $data['Workplace'] ?? 5,
+                'Ambar' => $data['Warehouse'] ?? 6,
+                'Fatura_Carisi' => []
+            ];
+
+            // Info
+            $TData['Tarih'] = $data['InvoiceDate'] ?? null;
+            $TData['Saat'] = $data['InvoiceTime'] ?? null;
+            $TData['DovizTuru'] = $data['Currency'] ?? null;
+            $TData['IslemDovizKuru'] = $data['CurrencyValue'] ?? null;
+            $TData['FaturaOzelKod'] = $data['InvoiceCode'] ?? null;
+            $TData['GenelAciklama'] = $data['GeneralDescription'] ?? null;
+            $TData['Not2'] = $data['GeneralDescriptionAdd'] ?? null;
+            $TData['VadeGunu'] = $data['PaymentDue'] ?? null;
+            $TData['SatisElemani'] = $data['SalesCode'] ?? null;
+            $TData['Fatura_Carisi']['Kod'] = $data['AccountCode'] ?? null;
+            $TData['Fatura_Carisi']['Unvan'] = $data['CompanyName'] ?? null;
+            $TData['Fatura_Carisi']['Adres'] = $data['StreetAddress'] ?? null;
+            $TData['Fatura_Carisi']['Il'] = $data['City'] ?? null;
+            $TData['Fatura_Carisi']['Ulke'] = $data['CountryId'] ?? null;
+            $TData['Fatura_Carisi']['Telefon1'] = $data['PhoneNumber'] ?? null;
+            $TData['Fatura_Carisi']['Email'] = $data['Email'] ?? null;
+            $TData['Fatura_Carisi']['VergiDairesi'] = $data['TaxOffice'] ?? null;
+            $TData['Fatura_Carisi']['TCKimlik_Vergino'] = $data['TaxNumber'] ?? null;
+
+            // Lines
+            if (isset($data['Lines']) && count($data['Lines']) > 0) {
+                $TData['Satirlar'] = [];
+                foreach ($data['Lines'] as $line) {
+                    $product = $line['product'] ?? [];
+                    array_push($TData['Satirlar'],
+                        [
+                            'SatirTuru' => $line['RowType'] ?? 1,
+                            'Miktar' => $line['quantity'] ?? 1,
+                            'Birim' => 'Adet',
+                            'Fiyat' => $line['Amount'] ?? null,
+                            'KDV' => $line['VatAmount'] ?? null,
+                            'SatirAciklamasi' => $line['RowDescription'] ?? null,
+                            'UrunBilgisi' => [
+                                'FirmNr' => $data['FirmNumber'] ?? 999,
+                                'Kod' => $product['code'] ?? null,
+                                'UrunAdi' => $product['name'] ?? null,
+                                'Birim' => 'Adet',
+                            ]
+                        ]
+                    );
+                }
+            }
+        } else{
+            $TData = [];
+        }
+
+        return $TData;
+
     }
 
     /**
@@ -164,6 +232,7 @@ class LogoProvider implements AccountingInterface
     {
 
         if (!empty($this->invoiceData)) {
+
             $this->response = $this->http_client->request('POST', $this->base_url . '/' . 'api/SatisFaturasiKayit', [
                 'form_params' => $this->invoiceData,
                 'headers' => [
@@ -171,7 +240,9 @@ class LogoProvider implements AccountingInterface
                     'Accept' => 'application/json',
                 ]
             ]);
+
             $body = (array)json_decode($this->response->getBody());
+
             return $this->response($body);
         }
 
