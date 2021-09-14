@@ -68,12 +68,6 @@ class QuickbooksTest extends TestCase
             "BillEmail" => [
                 "Address" => "Familiystore@intuit.com"
             ],
-            "BillEmailCc" => [
-                "Address" => "a@intuit.com"
-            ],
-            "BillEmailBcc" => [
-                "Address" => "v@intuit.com"
-            ]
         ])->create();
         
         $res = (array) json_decode($response);

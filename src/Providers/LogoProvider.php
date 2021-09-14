@@ -142,22 +142,26 @@ class LogoProvider implements AccountingInterface
                 $TData['Satirlar'] = [];
                 foreach ($data['Lines'] as $line) {
                     $product = $line['product'] ?? [];
-                    array_push($TData['Satirlar'],
-                        [
-                            'SatirTuru' => $line['RowType'] ?? 1,
-                            'Miktar' => $line['quantity'] ?? 1,
+                    $s = [
+                        'SatirTuru' => $line['RowType'] ?? 1,
+                        'Miktar' => $line['quantity'] ?? 1,
+                        'Birim' => 'Adet',
+                        'Fiyat' => $line['Amount'] ?? null,
+                        'KDV' => $line['Vat'] ?? null,
+                        'SatirAciklamasi' => $line['RowDescription'] ?? null,
+                        'UrunBilgisi' => [
+                            'FirmNr' => $data['FirmNumber'] ?? 999,
+                            'Kod' => $product['code'] ?? null,
+                            'UrunAdi' => $product['name'] ?? null,
                             'Birim' => 'Adet',
-                            'Fiyat' => $line['Amount'] ?? null,
-                            'KDV' => $line['VatAmount'] ?? null,
-                            'SatirAciklamasi' => $line['RowDescription'] ?? null,
-                            'UrunBilgisi' => [
-                                'FirmNr' => $data['FirmNumber'] ?? 999,
-                                'Kod' => $product['code'] ?? null,
-                                'UrunAdi' => $product['name'] ?? null,
-                                'Birim' => 'Adet',
-                            ]
                         ]
-                    );
+                    ];
+                    if($line['Vat'] == "5/10"){
+                        $s["TevkifatKodu"] = 640;
+                        $s["TevkifatOraniPay"] = 5;
+                        $s["TevkifatOraniPayda"] = 10;
+                    }
+                    array_push($TData['Satirlar'],$s);
                 }
             }
         } else{
