@@ -156,10 +156,11 @@ class LogoProvider implements AccountingInterface
                             'Birim' => 'Adet',
                         ]
                     ];
-                    if($line['Vat'] == "5/10"){
-                        $s["TevkifatKodu"] = 640;
-                        $s["TevkifatOraniPay"] = 5;
-                        $s["TevkifatOraniPayda"] = 10;
+                    if($line['Vat'] == "5/10") {
+                        $s['KDV'] = 18;
+                        $s['TevkifatKodu'] = 640;
+                        $s['TevkifatOraniPay'] = 5;
+                        $s['TevkifatOraniPayda'] = 10;
                     }
                     array_push($TData['Satirlar'],$s);
                 }
